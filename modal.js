@@ -23,36 +23,62 @@ fileInput.addEventListener('change', function (event) {
     }
 });
 
-/// Fonction pour ajouter une figure dans la galerie
 function setFigure(data) {
-    const gallery = document.querySelector(".gallery");
-    const galleryModal = document.querySelector(".gallery-modal");
-  
-    // Crée la figure principale pour la galerie
-    const figure = document.createElement("figure");
-    figure.innerHTML = `
+  const gallery = document.querySelector(".gallery");
+  const galleryModal = document.querySelector(".gallery-modal");
+
+  // Crée la figure principale pour la galerie
+  const figure = document.createElement("figure");
+  figure.setAttribute("data-work-id", data.id); // Ajouter un attribut unique
+  figure.innerHTML = `
       <img src="${data.imageUrl}" alt="${data.title}">
       <figcaption>${data.title}</figcaption>
-    `;
-  
-    // Ajoute la figure principale à la galerie
-    gallery.appendChild(figure);
-  
-    // Crée une figure distincte pour la galerie modale avec l'icône directement dans innerHTML
+  `;
+
+  // Ajoute la figure principale à la galerie
+  gallery.appendChild(figure);
+
+  // Crée une figure distincte pour la galerie modale avec l'icône de suppression
   const figureClone = document.createElement("figure");
   figureClone.id = `work-${data.id}`; // Ajout de l'ID unique
-  figureClone.innerHTML = `<div class="image-container">
-    <img src="${data.imageUrl}" alt="${data.title}">
-    <i class="fa-solid fa-trash-can overlay-icon" data-work-id="${data.id}"></i>
-  </div>`;
+  figureClone.innerHTML = `
+      <div class="image-container">
+          <img src="${data.imageUrl}" alt="${data.title}">
+          <i class="fa-solid fa-trash-can overlay-icon" data-work-id="${data.id}"></i>
+      </div>
+  `;
+
+  // Ajoute la figure clone à la galerie modale
+  galleryModal.appendChild(figureClone);
+
+  // Retourner les deux éléments pour des modifications indépendantes
+  return { figure, figureClone };
+}
   
+  //   // Crée une figure distincte pour la galerie modale avec l'icône directement dans innerHTML
+  // const figureClone = document.createElement("figure");
+  // figureClone.id = `work-${data.id}`; // Ajout de l'ID unique
+  // figureClone.innerHTML = `<div class="image-container">
+  //   <img src="${data.imageUrl}" alt="${data.title}">
+  //   <i class="fa-solid fa-trash-can overlay-icon" data-work-id="${data.id}"></i>
+  // </div>`;
   
-    // Ajoute la figure clone à la galerie modale
-    galleryModal.appendChild(figureClone);
+  //  // Crée une figure distincte pour la galerie modale avec l'icône de suppression
+  //  const figureClone = document.createElement("figure");
+  //  figureClone.id = `work-${data.id}`; // Ajout de l'ID unique
+  //  figureClone.innerHTML = `
+  //      <div class="image-container">
+  //          <img src="${data.imageUrl}" alt="${data.title}">
+  //          <i class="fa-solid fa-trash-can overlay-icon" data-work-id="${data.id}"></i>
+  //      </div>
+  //  `;
   
-    // Retourner les deux éléments pour des modifications indépendantes
-    return { figure, figureClone };
-  }
+  //   // Ajoute la figure clone à la galerie modale
+  //   galleryModal.appendChild(figureClone);
+  
+  //   // Retourner les deux éléments pour des modifications indépendantes
+  //   return { figure, figureClone };
+  
 
   document.addEventListener("DOMContentLoaded", () => {
     //   const modal1 = document.getElementById("modal1");
@@ -346,70 +372,108 @@ document.addEventListener("DOMContentLoaded", () => {
   async function deleteWork(workId) {
     const token = sessionStorage.getItem("authToken");
     if (!token) {
-      console.error("Utilisateur non authentifié");
-      return;
+        console.error("Utilisateur non authentifié");
+        return;
     }
-  
+
     try {
-      const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Accept": "application/json",
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error("Erreur lors de la suppression de l'élément");
-      }
-  
-      console.log(`Élément ${workId} supprimé avec succès`);
-  
-      // Supprimer la figure de la galerie modale
-      const figureToRemoveModal = document.querySelector(`#work-${workId}`);
-      if (figureToRemoveModal) {
-        figureToRemoveModal.remove();
-      }
-  
-      // Supprimer la figure correspondante de la galerie principale
-      const gallery = document.querySelector(".gallery");
-      const figureToRemoveGallery = Array.from(gallery.querySelectorAll("figure"))
-        .find(figure => figure.querySelector(`img[src*="${workId}"]`));
-      if (figureToRemoveGallery) {
-        figureToRemoveGallery.remove();
-      }
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'élément :", error);
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const deleteButtons = document.querySelectorAll('.add-file');
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const projectId = button.getAttribute('add-file');
-
-            // Envoyer une requête DELETE au serveur
-            fetch(`delete_project.php?id=${projectId}`, {
-                method: 'DELETE',
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Supprimer le projet du DOM
-                        const projectElement = document.getElementById(`project-${projectId}`);
-                        projectElement.remove();
-                    } else {
-                        alert('Erreur : ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur lors de la suppression :', error);
-                });
+        const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Accept": "application/json",
+            },
         });
-    });
-});
+
+        if (!response.ok) {
+            throw new Error("Erreur lors de la suppression de l'élément");
+        }
+
+        console.log(`Élément ${workId} supprimé avec succès`);
+
+        // Supprimer la figure de la galerie modale
+        const figureToRemoveModal = document.querySelector(`#work-${workId}`);
+        if (figureToRemoveModal) {
+            figureToRemoveModal.remove();
+        }
+
+        // Supprimer la figure correspondante de la galerie principale
+        const gallery = document.querySelector(".gallery");
+        const figureToRemoveGallery = gallery.querySelector(`figure[data-work-id="${workId}"]`);
+        if (figureToRemoveGallery) {
+            figureToRemoveGallery.remove();
+        }
+    } catch (error) {
+        console.error("Erreur lors de la suppression de l'élément :", error);
+    }
+}
+
+  // async function deleteWork(workId) {
+  //   const token = sessionStorage.getItem("authToken");
+  //   if (!token) {
+  //     console.error("Utilisateur non authentifié");
+  //     return;
+  //   }
+  
+  //   try {
+  //     const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Authorization": `Bearer ${token}`,
+  //         "Accept": "application/json",
+  //       },
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error("Erreur lors de la suppression de l'élément");
+  //     }
+  
+  //     console.log(`Élément ${workId} supprimé avec succès`);
+  
+  //     // Supprimer la figure de la galerie modale
+  //     const figureToRemoveModal = document.querySelector(`#work-${workId}`);
+  //     if (figureToRemoveModal) {
+  //       figureToRemoveModal.remove();
+  //     }
+  
+  //     // Supprimer la figure correspondante de la galerie principale
+  //     const gallery = document.querySelector(".gallery");
+  //     const figureToRemoveGallery = Array.from(gallery.querySelectorAll("figure"))
+  //       .find(figure => figure.querySelector(`img[src*="${workId}"]`));
+  //     if (figureToRemoveGallery) {
+  //       figureToRemoveGallery.remove();
+  //     }
+  //   } catch (error) {
+  //     console.error("Erreur lors de la suppression de l'élément :", error);
+  //   }
+  // }
+
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   const deleteButtons = document.querySelectorAll('.add-file');
+
+  //   deleteButtons.forEach(button => {
+  //       button.addEventListener('click', () => {
+  //           const projectId = button.getAttribute('add-file');
+
+  //           // Envoyer une requête DELETE au serveur
+  //           fetch(`delete_project.php?id=${projectId}`, {
+  //               method: 'DELETE',
+  //           })
+  //               .then(response => response.json())
+  //               .then(data => {
+  //                   if (data.status === 'success') {
+  //                       // Supprimer le projet du DOM
+  //                       const projectElement = document.getElementById(`project-${projectId}`);
+  //                       projectElement.remove();
+  //                   } else {
+  //                       alert('Erreur : ' + data.message);
+  //                   }
+  //               })
+  //               .catch(error => {
+  //                   console.error('Erreur lors de la suppression :', error);
+  //               });
+  //       });
+  //   });
 
 document.addEventListener("DOMContentLoaded", () => {
         const galleryModal = document.querySelector(".gallery-modal");
@@ -424,6 +488,12 @@ document.addEventListener("DOMContentLoaded", () => {
       
             if (confirm("Voulez-vous vraiment supprimer cet élément ?")) {
               deleteWork(workId); // Appeler la fonction de suppression
+
+               // Supprimer l'élément du DOM
+               const photoElement = icon.closest(".photo-container"); // Ajustez le sélecteur selon votre structure HTML
+               if (photoElement) {
+                   photoElement.remove(); // Supprime l'élément de la page
+               }
             }
         }
         });
@@ -437,4 +507,40 @@ document.addEventListener("DOMContentLoaded", () => {
         // Action pour retourner ou fermer
         document.querySelector('.modal-wrapper').classList.remove('active');
       });
-  
+
+  // Fonction pour ajouter des écouteurs d'événements aux icônes de suppression
+function addDeleteListeners() {
+  const deleteIcons = document.querySelectorAll(".overlay-icon");
+  deleteIcons.forEach(icon => {
+      icon.addEventListener("click", (event) => {
+          const workId = event.target.closest(".overlay-icon").getAttribute("data-work-id");
+          if (workId) {
+              deleteWork(workId);
+          }
+      });
+  });
+}
+
+// Appeler cette fonction après avoir chargé les éléments dans la modal
+addDeleteListeners();
+
+// Charger le contenu de la modal
+async function loadModalContent() {
+  const response = await fetch("http://localhost:5678/api/works");
+  const works = await response.json();
+
+  const gallery = document.querySelector(".gallery");
+  const galleryModal = document.querySelector(".gallery-modal");
+
+  // Vider les galeries avant d'ajouter de nouveaux éléments
+  gallery.innerHTML = "";
+  galleryModal.innerHTML = "";
+
+  // Ajouter chaque œuvre à la galerie et à la modal
+  works.forEach(work => {
+      setFigure(work);
+  });
+
+// // Appeler cette fonction pour charger le contenu de la modal
+// loadModalContent();
+}
