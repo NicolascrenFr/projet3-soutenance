@@ -140,34 +140,131 @@
   // Appeler getCategories pour initialiser les filtres
   getCategories();
   
-  document.getElementById("photo-file").addEventListener("change", function (event) {
-	const file = event.target.files[0];
-	if (file) {
-		const reader = new FileReader();
-		reader.onload = function (e) {
-			const previewContainer = document.querySelector(".file-upload-container");
+//   document.getElementById("photo-file").addEventListener("change", function (event) {
+// 	const file = event.target.files[0];
+// 	if (file) {
+// 		const reader = new FileReader();
+// 		reader.onload = function (e) {
+// 			const previewContainer = document.querySelector(".file-upload-container");
 			
-			// Supprime les anciens aperçus (si nécessaire)
-			const oldPreview = previewContainer.querySelector(".image-preview");
-			if (oldPreview) {
-				oldPreview.remove();
-			}
+// 			// Supprime les anciens aperçus (si nécessaire)
+// 			const oldPreview = previewContainer.querySelector(".image-preview");
+// 			if (oldPreview) {
+// 				oldPreview.remove();
+// 			}
   
-			// Masque les autres éléments dans le conteneur
-			previewContainer.querySelector(".image-bouton").style.display = "none";
-			previewContainer.querySelector(".js-add-photo-file").style.display = "none";
-			previewContainer.querySelector("p").style.display = "none";
+// 			// Masque les autres éléments dans le conteneur
+// 			previewContainer.querySelector(".image-bouton").style.display = "none";
+// 			previewContainer.querySelector(".js-add-photo-file").style.display = "none";
+// 			previewContainer.querySelector("p").style.display = "none";
   
-			// Ajoute l'aperçu de l'image
-			const imgPreview = document.createElement("img");
-			imgPreview.src = e.target.result;
-			imgPreview.alt = "Aperçu de la photo";
-			imgPreview.classList.add("image-preview");
-			previewContainer.appendChild(imgPreview);
-		};
-		reader.readAsDataURL(file);
-	}
-  });
+// 			// Ajoute l'aperçu de l'image
+// 			const imgPreview = document.createElement("img");
+// 			imgPreview.src = e.target.result;
+// 			imgPreview.alt = "Aperçu de la photo";
+// 			imgPreview.classList.add("image-preview");
+// 			previewContainer.appendChild(imgPreview);
+// 		};
+// 		reader.readAsDataURL(file);
+// 	}
+//   });
+
+// // Fonction pour réinitialiser le conteneur d'aperçu
+// function resetPreviewContainer() {
+//     const previewContainer = document.querySelector(".file-upload-container");
+
+//     // Réafficher les éléments par défaut
+//     previewContainer.querySelector(".image-bouton").style.display = "block";
+//     previewContainer.querySelector(".js-add-photo-file").style.display = "block";
+//     previewContainer.querySelector("p").style.display = "block";
+
+//     // Supprimer l'aperçu de l'image s'il existe
+//     const oldPreview = previewContainer.querySelector(".image-preview");
+//     if (oldPreview) {
+//         oldPreview.remove();
+//     }
+
+//     // Réinitialiser le champ de fichier
+//     const fileInput = document.getElementById("photo-file");
+//     fileInput.value = ""; // Effacer la sélection de fichier
+// }
+
+// Fonction pour réinitialiser le formulaire de la modal 2
+function resetModal2Form() {
+    // Réinitialiser le champ de fichier
+    const fileInput = document.getElementById("photo-file");
+    fileInput.value = "";
+
+    // Réinitialiser le champ de titre
+    const titleInput = document.getElementById("photo-title");
+    titleInput.value = "";
+
+    // Réinitialiser le menu déroulant des catégories
+    const categorySelect = document.getElementById("photo-categorie");
+    categorySelect.value = ""; // Réinitialiser à l'option vide
+
+    // Réinitialiser l'aperçu de l'image
+    const previewContainer = document.querySelector(".file-upload-container");
+    const oldPreview = previewContainer.querySelector(".image-preview");
+    if (oldPreview) {
+        oldPreview.remove();
+    }
+    previewContainer.querySelector(".image-bouton").style.display = "block";
+    previewContainer.querySelector(".js-add-photo-file").style.display = "block";
+    previewContainer.querySelector("p").style.display = "block";
+
+     // Réinitialiser le bouton "Ajouter"
+     const addFileButton = document.querySelector(".add-file");
+     addFileButton.style.backgroundColor = "#B3B3B3"; // Couleur grise
+     addFileButton.disabled = true; // Désactiver le bouton
+}
+
+// Réinitialiser le formulaire lorsque la modal 2 est ouverte
+const addPhotoButton = document.querySelector(".add-photo");
+addPhotoButton.addEventListener("click", () => {
+    resetModal2Form(); // Réinitialiser le formulaire de la modal 2
+    checkFields(); // Vérifier les champs pour mettre à jour l'état du bouton
+});
+
+// Écouteur d'événement pour le changement de fichier
+document.getElementById("photo-file").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const previewContainer = document.querySelector(".file-upload-container");
+
+            // Supprimer les anciens aperçus (si nécessaire)
+            const oldPreview = previewContainer.querySelector(".image-preview");
+            if (oldPreview) {
+                oldPreview.remove();
+            }
+
+            // Masquer les autres éléments dans le conteneur
+            previewContainer.querySelector(".image-bouton").style.display = "none";
+            previewContainer.querySelector(".js-add-photo-file").style.display = "none";
+            previewContainer.querySelector("p").style.display = "none";
+
+            // Ajouter l'aperçu de l'image
+            const imgPreview = document.createElement("img");
+            imgPreview.src = e.target.result;
+            imgPreview.alt = "Aperçu de la photo";
+            imgPreview.classList.add("image-preview");
+            previewContainer.appendChild(imgPreview);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// // Réinitialiser le conteneur d'aperçu lorsque la modal 2 est ouverte
+// const addPhotoButton = document.querySelector(".add-photo");
+// addPhotoButton.addEventListener("click", () => {
+//     resetPreviewContainer(); // Réinitialiser le conteneur d'aperçu
+// });
+
+// // const addFileButton = document.querySelector(".add-file");
+// addFileButton.style.backgroundColor = "#B3B3B3"; // Couleur grise
+// addFileButton.disabled = true; // Désactiver le bouton
 
 // Fonction pour charger les projets depuis l'API
 async function loadProjects() {
