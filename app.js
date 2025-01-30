@@ -127,15 +127,15 @@
 	}
   }
   
-//   // Fonction pour gérer l'état actif des filtres
-//   function setActiveFilter(selectedFilter) {
-// 	// Retirer la classe 'active' de tous les filtres
-// 	const filters = document.querySelectorAll(".filter");
-// 	filters.forEach((filter) => filter.classList.remove("active"));
+  // Fonction pour gérer l'état actif des filtres
+  function setActiveFilter(selectedFilter) {
+	// Retirer la classe 'active' de tous les filtres
+	const filters = document.querySelectorAll(".filter");
+	filters.forEach((filter) => filter.classList.remove("active"));
   
-// 	// Ajouter la classe 'active' au filtre sélectionné
-// 	selectedFilter.classList.add("active");
-//   }
+	// Ajouter la classe 'active' au filtre sélectionné
+	selectedFilter.classList.add("active");
+  }
   
   // Appeler getCategories pour initialiser les filtres
   getCategories();
@@ -168,3 +168,38 @@
 		reader.readAsDataURL(file);
 	}
   });
+
+// Fonction pour charger les projets depuis l'API
+async function loadProjects() {
+    try {
+        const response = await fetch("http://localhost:5678/api/works");
+        if (!response.ok) {
+            throw new Error("Erreur lors du chargement des projets");
+        }
+        const projects = await response.json();
+        displayProjects(projects);
+    } catch (error) {
+        console.error("Erreur lors du chargement des projets :", error);
+    }
+}
+
+// Fonction pour afficher les projets dans la galerie
+function displayProjects(projects) {
+    const gallery = document.querySelector(".gallery");
+    gallery.innerHTML = ""; // Vider la galerie avant d'ajouter de nouveaux projets
+
+    projects.forEach((project) => {
+        const figure = document.createElement("figure");
+        figure.setAttribute("data-work-id", project.id);
+        figure.innerHTML = `
+            <img src="${project.imageUrl}" alt="${project.title}">
+            <figcaption>${project.title}</figcaption>
+        `;
+        gallery.appendChild(figure);
+    });
+}
+
+// Charger les projets au chargement de la page
+document.addEventListener("DOMContentLoaded", () => {
+    loadProjects();
+});
