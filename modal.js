@@ -115,26 +115,49 @@ function setFigure(data) {
 
     // Fonction pour vérifier si tous les champs sont remplis
     function checkFields() {
-    const isFileFilled = photoInput.files.length > 0; // Vérifie si un fichier est sélectionné
-    const isTitleFilled = titleInput.value.trim() !== ""; // Vérifie si le titre est rempli
-    const isCategorySelected = categorySelect.value !== ""; // Vérifie si une catégorie est sélectionnée
-
-    if (isFileFilled && isTitleFilled && isCategorySelected) {
-      addFile.style.backgroundColor = "#1D6154"; // Bouton vert
-      addFile.disabled = false; // Active le bouton
-    } else {
-      addFile.style.backgroundColor = "#B3B3B3"; // Bouton gris
-      addFile.disabled = true; // Désactive le bouton
+        const isFileFilled = fileInput.files.length > 0;
+        const isTitleFilled = document.getElementById('photo-title').value.trim() !== "";
+        const isCategorySelected = document.getElementById('photo-categorie').value !== "";
+    
+        const addFileButton = document.querySelector(".add-file");
+        if (isFileFilled && isTitleFilled && isCategorySelected) {
+            addFileButton.style.backgroundColor = "#1D6154"; // Bouton vert
+            addFileButton.disabled = false; // Activer le bouton
+        } else {
+            addFileButton.style.backgroundColor = "#B3B3B3"; // Bouton gris
+            addFileButton.disabled = true; // Désactiver le bouton
+        }
     }
-  }
+    
+    // Écouteurs pour vérifier les champs
+    fileInput.addEventListener("change", checkFields);
+    document.getElementById('photo-title').addEventListener("input", checkFields);
+    document.getElementById('photo-categorie').addEventListener("change", checkFields);
+// Charger les projets au démarrage
+document.addEventListener("DOMContentLoaded", () => {
+    loadCategories();
+    checkFields();
+});
+//     const isFileFilled = photoInput.files.length > 0; // Vérifie si un fichier est sélectionné
+//     const isTitleFilled = titleInput.value.trim() !== ""; // Vérifie si le titre est rempli
+//     const isCategorySelected = categorySelect.value !== ""; // Vérifie si une catégorie est sélectionnée
 
-  // Écouteurs d'événements pour surveiller les changements
-  photoInput.addEventListener("change", checkFields);
-  titleInput.addEventListener("input", checkFields);
-  categorySelect.addEventListener("change", checkFields);
+//     if (isFileFilled && isTitleFilled && isCategorySelected) {
+//       addFile.style.backgroundColor = "#1D6154"; // Bouton vert
+//       addFile.disabled = false; // Active le bouton
+//     } else {
+//       addFile.style.backgroundColor = "#B3B3B3"; // Bouton gris
+//       addFile.disabled = true; // Désactive le bouton
+//     }
+//   }
 
-  // Initialisation au chargement de la page
-  checkFields();
+//   // Écouteurs d'événements pour surveiller les changements
+//   photoInput.addEventListener("change", checkFields);
+//   titleInput.addEventListener("input", checkFields);
+//   categorySelect.addEventListener("change", checkFields);
+
+//   // Initialisation au chargement de la page
+//   checkFields();
 });
     
       // Fonction pour charger les catégories depuis l'API
@@ -195,6 +218,14 @@ function setFigure(data) {
     
           // Réinitialiser le formulaire après succès
           photoForm.reset();
+
+        // Ajouter le nouveau projet à la galerie principale et à la modal 1
+        setFigure(result);
+
+        // Réinitialiser le formulaire
+        document.getElementById('add-photo-form').reset();
+        previewImage.style.display = 'none';
+        previewImage.src = '#';
     
           // Fermer la modal 2
           closeModal(modal2);
@@ -538,7 +569,7 @@ async function loadModalContent() {
 
   // Ajouter chaque œuvre à la galerie et à la modal
   works.forEach(work => {
-      setFigure(work);
+    //   setFigure(work);
   });
 
 // // Appeler cette fonction pour charger le contenu de la modal
