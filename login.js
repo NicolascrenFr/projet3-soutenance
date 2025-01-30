@@ -59,7 +59,6 @@ document.querySelectorAll(".js-modal-trigger").forEach((a) => {
   a.addEventListener("click", openModal);
 });
 
-
 window.addEventListener("keydown", function (e) {
   if (e.key === "Escape" || e.key === "Esc") {
     closeModal(e);
@@ -76,10 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-
 async function handleSubmit(event) {
     event.preventDefault();
-    
 
     let user = {
         email: document.getElementById("email").value,
@@ -160,11 +157,9 @@ async function handleSubmit(event) {
 document.addEventListener("DOMContentLoaded", () => {
     displayAdminMode();
     protectAdminActions();
+    toggleCategoriesVisibility();
   });
   
-  // // Appel de la fonction
-  // displayAdminMode();
-
 function isUserLoggedIn() {
 	return Boolean(sessionStorage.getItem("authToken")); // Vérifie si un token d'authentification existe
   }
@@ -178,4 +173,3 @@ function isUserLoggedIn() {
 		categoriesContainer.style.display = "flex"; // Afficher les catégories
 	}
   }
-	  toggleCategoriesVisibility();
